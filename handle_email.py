@@ -14,6 +14,7 @@ import utils
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.mail_handlers import InboundMailHandler
 from google.appengine.ext.webapp.util import run_wsgi_app
+from google.appengine.api import users
 
 from models import Notification
 import tasks
@@ -21,12 +22,16 @@ import tasks
 class LogSenderHandler(InboundMailHandler):
     def receive(self, msg):
         notification = Notification()
-        notification.user = msg.sender
+        notification.sender = msg.sender
         delay = utils.target_username(msg.to)
+        notification.owner = users.User(utils.address_part(msg.sender))
+
         notification.delay_str = delay
         notification.fire_time = datetime.datetime.now() + utils.parse_timedelta(delay)
         
         notification.email = pickle.dumps(msg)
+        notification.subject = msg.subject
+
         notification.put()
         tasks.schedule_notification(notification)
         logging.info("Received a message from: " + msg.sender)

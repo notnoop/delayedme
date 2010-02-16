@@ -10,10 +10,13 @@ Copyright (c) 2010 Jude LLC. All rights reserved.
 from google.appengine.ext import db
 
 class Notification(db.Model):
-    user = db.StringProperty()
+    sender = db.StringProperty()
+    owner = db.UserProperty()
+
     fire_time = db.DateTimeProperty()
     delay_str = db.StringProperty()
 
     email = db.TextProperty()
+    subject = db.TextProperty()
 
     sent = db.BooleanProperty(default=False)

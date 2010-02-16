@@ -9,17 +9,31 @@ Copyright (c) 2010 Jude LLC. All rights reserved.
 
 import pickle
 import logging
+import os
 
 from google.appengine.ext import webapp
+from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+from google.appengine.api import users
 from models import Notification
 import utils
 
 class MainPage(webapp.RequestHandler):
     def get(self):
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.out.write('Hello, webapp World!')
+        user = users.get_current_user()
+        if not user:
+            uri = users.create_login_url('/')
+            self.redirect(uri)
+            return
+
+        template_values = {
+            'notifications': Notification.all().filter('owner = ', user),
+            'user': user
+        }
+
+        path = os.path.join(os.path.dirname(__file__), 'templates', 'index.html')
+        self.response.out.write(template.render(path, template_values))
 
 class TaskHandler(webapp.RequestHandler):
     def get(self):
@@ -43,6 +57,7 @@ class TaskHandler(webapp.RequestHandler):
         message.send()
 
         notification.sent = True
+        notification.put()
 
 application = webapp.WSGIApplication(
                                      [('/fire', TaskHandler),

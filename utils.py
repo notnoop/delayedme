@@ -79,3 +79,17 @@ def target_username(email):
         return None
 
     return username_part(to[1])
+
+def address_part(email):
+    """
+    Returns the email part of the address
+    
+    >>> address_part('test@example.com')
+    'test@example.com'
+    
+    >>> address_part('Tester <test@example.com>')
+    'test@example.com'
+
+    """
+    import rfc822
+    return rfc822.parseaddr(email)[1]
