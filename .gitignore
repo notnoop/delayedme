@@ -1,0 +1,11 @@
+*.pyc
+index.yaml
+
+.project
+.settings
+.pydevproject
+
+*~
+.#*
+*.swp
+
