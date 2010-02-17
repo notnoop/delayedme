@@ -11,6 +11,7 @@ import pickle
 import logging, datetime
 import utils
 
+from google.appengine.api.labs import taskqueue
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.mail_handlers import InboundMailHandler
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -19,7 +20,13 @@ from google.appengine.api import users
 from models import Notification
 import tasks
 
-class LogSenderHandler(InboundMailHandler):
+def schedule_notification(notification):
+	fire_time = notification.fire_time
+	id = notification.key().id()
+	taskqueue.add(url='/fire', params={'id':id },
+				  eta=fire_time)
+
+class NotificationEmailHandler(InboundMailHandler):
     def receive(self, msg):
         notification = Notification()
         notification.sender = msg.sender
@@ -33,10 +40,10 @@ class LogSenderHandler(InboundMailHandler):
         notification.subject = msg.subject
 
         notification.put()
-        tasks.schedule_notification(notification)
+        schedule_notification(notification)
         logging.info("Received a message from: " + msg.sender)
 
-application = webapp.WSGIApplication([LogSenderHandler.mapping()], debug=True)
+application = webapp.WSGIApplication([NotificationEmailHandler.mapping()], debug=True)
 
 def main():
     run_wsgi_app(application)
