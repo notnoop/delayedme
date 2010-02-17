@@ -41,9 +41,10 @@ class TaskHandler(webapp.RequestHandler):
     def post(self):
         id = long(self.request.get('id'))
         notification = Notification.get_by_id(id)
-        logging.warning('Notif %s' % notification)
+        logging.debug('Notifying %s' % notification)
 
         if (notification == None):
+            logging.warning('Couldnot find notification')
             self.response.out.write('Notification not found: %d\n\r' % id)
             return
         
@@ -52,6 +53,7 @@ class TaskHandler(webapp.RequestHandler):
         
         message.to = message.sender
         message.sender = utils.format_reminder_email(notification.delay_str)
+        logging.info('sending email from %s' % message.sender)
         message.send()
 
         notification.sent = True

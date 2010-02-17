@@ -30,3 +30,6 @@ class Notification(db.Model):
 
     def get_msg(self):
         return pickle.loads(str(self.email))
+
+    def __str__(self):
+        return 'Notification %s - %s' % (self.sender, self.subject, )

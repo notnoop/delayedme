@@ -56,7 +56,7 @@ def username_part(address):
         return address[0:loc]
 
 def format_reminder_email(delay_period):
-    return 'Syphir Reminder <' + delay_period + '@' + MAIL_DOMAIN
+    return 'Syphir Reminder <' + delay_period + '@' + MAIL_DOMAIN + '>'
 
 def target_username(email):
     """
