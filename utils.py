@@ -7,9 +7,11 @@ Created by Mahmood Ali on 2010-02-15.
 Copyright (c) 2010 Jude LLC. All rights reserved.
 """
 
+import rfc822
 import datetime
 import re
 import logging
+import urllib
 
 UNIT_CLASSES = (
     ('seconds', 'second', 'sec', 'secs', 's',),
@@ -72,7 +74,6 @@ def target_username(email):
     'test1'
 
     """
-    import rfc822
     logging.warning('To     : %s' % email)
     to = rfc822.parseaddr(email)
     if (to[1] == None):
@@ -91,5 +92,19 @@ def address_part(email):
     'test@example.com'
 
     """
-    import rfc822
     return rfc822.parseaddr(email)[1]
+
+def email_in_path(url):
+    """
+    Returns the target username in request path in GAE
+    
+    >>> email_in_path('/_ah/mail/30seconds@whatever.com')
+    '30seconds'
+
+    >>> email_in_path('/_ah/mail/30m%40what.com')
+    '30m'
+
+    """
+    path = urllib.url2pathname(url)
+    parts = path.split('/')
+    return target_username(parts[3])

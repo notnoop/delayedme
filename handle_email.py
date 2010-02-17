@@ -42,7 +42,7 @@ class NotificationEmailHandler(InboundMailHandler):
         notification.owner = users.User(utils.address_part(msg.sender))
 
         # TODO: Handle invalid delays
-        delay = utils.target_username(msg.to)
+        delay = utils.email_in_path(self.request.path)
         notification.delay_str = delay
         notification.fire_time = datetime.datetime.now() + utils.parse_timedelta(delay)
 
