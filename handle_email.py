@@ -21,21 +21,32 @@ from models import Notification
 import tasks
 
 def schedule_notification(notification):
+    """
+    Schedule a task to send the notification at its fire time
+
+    """
 	fire_time = notification.fire_time
 	id = notification.key().id()
 	taskqueue.add(url='/fire', params={'id':id },
 				  eta=fire_time)
 
 class NotificationEmailHandler(InboundMailHandler):
+    """
+    And email handler that persist the email message in order to
+    resend it later.  The handler uses the username of the target email
+    (e.g. '3sec' in '3sec@domain.com') to determine the delay
+    
+    """
     def receive(self, msg):
         notification = Notification()
         notification.sender = msg.sender
-        delay = utils.target_username(msg.to)
         notification.owner = users.User(utils.address_part(msg.sender))
 
+        # TODO: Handle invalid delays
+        delay = utils.target_username(msg.to)
         notification.delay_str = delay
         notification.fire_time = datetime.datetime.now() + utils.parse_timedelta(delay)
-        
+
         notification.email = pickle.dumps(msg)
         notification.subject = msg.subject
 
