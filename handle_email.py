@@ -25,8 +25,9 @@ def schedule_notification(notification):
     """
     fire_time = notification.fire_time
     id = notification.key().id()
+    name = 'reminder-' + str(id)
     taskqueue.add(url='/fire', params={'id':id },
-                  eta=fire_time)
+                  eta=fire_time, name=name)
 
 class NotificationEmailHandler(InboundMailHandler):
     """
