@@ -6,10 +6,14 @@ models.py
 Created by Mahmood Ali on 2010-02-15.
 Copyright (c) 2010 Jude LLC. All rights reserved.
 """
+import pickle
 
 from google.appengine.ext import db
 
 class Notification(db.Model):
+    """
+    A 
+    """
     sender = db.StringProperty()
     owner = db.UserProperty()
 
@@ -20,3 +24,9 @@ class Notification(db.Model):
     subject = db.TextProperty()
 
     sent = db.BooleanProperty(default=False)
+
+    def set_msg(self, email):
+        self.email = pickle.dumps(msg)
+
+    def get_msg(self):
+        return pickle.loads(str(self.email))

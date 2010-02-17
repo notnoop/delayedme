@@ -7,7 +7,6 @@ Created by Mahmood Ali on 2010-02-15.
 Copyright (c) 2010 Jude LLC. All rights reserved.
 """
 
-import pickle
 import logging, datetime
 import utils
 
@@ -37,6 +36,7 @@ class NotificationEmailHandler(InboundMailHandler):
     (e.g. '3sec' in '3sec@domain.com') to determine the delay
     
     """
+
     def receive(self, msg):
         notification = Notification()
         notification.sender = msg.sender
@@ -47,7 +47,7 @@ class NotificationEmailHandler(InboundMailHandler):
         notification.delay_str = delay
         notification.fire_time = datetime.datetime.now() + utils.parse_timedelta(delay)
 
-        notification.email = pickle.dumps(msg)
+        notification.set_msg(msg)
         notification.subject = msg.subject
 
         notification.put()

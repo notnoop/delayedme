@@ -7,7 +7,6 @@ Created by Mahmood Ali on 2010-02-15.
 Copyright (c) 2010 Jude LLC. All rights reserved.
 """
 
-import pickle
 import logging
 import os
 
@@ -48,7 +47,7 @@ class TaskHandler(webapp.RequestHandler):
             self.response.out.write('Notification not found: %d\n\r' % id)
             return
         
-        message = pickle.loads(str(notification.email))
+        message = notification.get_msg()
         message.subject = '[Reminder] ' + message.subject
         
         reminder_email = utils.format_reminder_email(message.to)
