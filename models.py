@@ -25,7 +25,7 @@ class Notification(db.Model):
 
     sent = db.BooleanProperty(default=False)
 
-    def set_msg(self, email):
+    def set_msg(self, msg):
         self.email = pickle.dumps(msg)
 
     def get_msg(self):

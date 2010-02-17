@@ -17,17 +17,16 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import users
 
 from models import Notification
-import tasks
 
 def schedule_notification(notification):
     """
     Schedule a task to send the notification at its fire time
 
     """
-	fire_time = notification.fire_time
-	id = notification.key().id()
-	taskqueue.add(url='/fire', params={'id':id },
-				  eta=fire_time)
+    fire_time = notification.fire_time
+    id = notification.key().id()
+    taskqueue.add(url='/fire', params={'id':id },
+                  eta=fire_time)
 
 class NotificationEmailHandler(InboundMailHandler):
     """
