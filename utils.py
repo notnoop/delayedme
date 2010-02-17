@@ -21,6 +21,8 @@ UNIT_CLASSES = (
     ('weeks', 'week', 'w',),
 )
 
+MAIL_DOMAIN = 'delayedme.appspotmail.com'
+
 def to_dict(list):
     result = {}
     for row in list:
@@ -53,12 +55,8 @@ def username_part(address):
     else:
         return address[0:loc]
 
-def format_reminder_email(address):
-    loc = address.find('<')
-    if loc == -1:
-        return 'Syphir Reminder <' + address + '>'
-    else:
-        return address
+def format_reminder_email(delay_period):
+    return 'Syphir Reminder <' + delay_period + '@' + MAIL_DOMAIN
 
 def target_username(email):
     """
