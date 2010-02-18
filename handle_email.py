@@ -47,6 +47,9 @@ class NotificationEmailHandler(InboundMailHandler):
         notification.delay_str = delay
         notification.fire_time = datetime.datetime.now() + utils.parse_timedelta(delay)
 
+        if msg.cc:
+            del msg.cc
+
         notification.set_msg(msg)
         notification.subject = msg.subject
 

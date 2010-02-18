@@ -47,12 +47,13 @@ class TaskHandler(webapp.RequestHandler):
             logging.warning('Couldnot find notification')
             self.response.out.write('Notification not found: %d\n\r' % id)
             return
-        
+
         message = notification.get_msg()
         message.subject = '[Reminder] ' + message.subject
-        
-        message.to = message.sender
+
         message.sender = utils.format_reminder_email(notification.delay_str)
+        message.to = message.sender
+
         logging.info('sending email from %s' % message.sender)
         message.send()
 
