@@ -35,6 +35,8 @@ UNIT_CANON = to_dict(UNIT_CLASSES)
 times = re.compile(r"(\d+)[-_]?(\D+)").findall
 def parse_timedelta(s):
     parsed = times(s)
+    if not parsed:
+        raise ValueError('Could not parse time in ' + s)
     units = dict([[UNIT_CANON[v], int(k)] for k, v in parsed])
     return datetime.timedelta(**units)
 

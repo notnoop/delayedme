@@ -34,6 +34,19 @@ class MainPage(webapp.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), 'templates', 'index.html')
         self.response.out.write(template.render(path, template_values))
 
+def add_references(message):
+    msg_id = message['Message-ID']
+    del message['In-Reply-To']
+    message['In-Reply-To'] = msg_id
+    
+    old_references = message['References']
+    del message['References']
+    if old_references:
+        references = msg_id + '\r\n        ' + old_references
+    else:
+        references = msg_id
+    message['References'] = references
+
 class TaskHandler(webapp.RequestHandler):
     def get(self):
         self.redirect('/')
@@ -54,9 +67,17 @@ class TaskHandler(webapp.RequestHandler):
         message.to = message.sender
         message.sender = utils.format_reminder_email(notification.delay_str)
 
+        logging.warn('Message before: ' + message.original.as_string())
+
+        try:
+            add_references(message.original)
+        except Exception, e:
+            logging.warning(e)
+
         logging.info('sending email from %s' % message.sender)
         message.send()
 
+        logging.info('Message after: ' + message.original.as_string())
         notification.sent = True
         notification.put()
 
