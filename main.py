@@ -62,7 +62,7 @@ class TaskHandler(webapp.RequestHandler):
             return
 
         message = notification.get_msg()
-        message.subject = '[Reminder] ' + message.subject
+        message.subject = message.subject #'[Reminder] ' + message.subject #Husain Made this change
 
         message.to = message.sender
         message.sender = utils.format_reminder_email(notification.delay_str)
