@@ -67,8 +67,6 @@ class TaskHandler(webapp.RequestHandler):
         message.to = message.sender
         message.sender = utils.format_reminder_email(notification.delay_str)
 
-        logging.warn('Message before: ' + message.original.as_string())
-
         try:
             add_references(message.original)
         except Exception, e:
@@ -77,7 +75,6 @@ class TaskHandler(webapp.RequestHandler):
         logging.info('sending email from %s' % message.sender)
         message.send()
 
-        logging.info('Message after: ' + message.original.as_string())
         notification.sent = True
         notification.put()
 
