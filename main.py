@@ -38,7 +38,7 @@ def add_references(message):
     msg_id = message['Message-ID']
     del message['In-Reply-To']
     message['In-Reply-To'] = msg_id
-    
+
     old_references = message['References']
     del message['References']
     if old_references:
@@ -62,7 +62,7 @@ class TaskHandler(webapp.RequestHandler):
             return
 
         message = notification.get_msg()
-        message.subject = message.subject #'[Reminder] ' + message.subject #Husain Made this change
+        message.subject = message.subject
 
         message.to = message.sender
         message.sender = utils.format_reminder_email(notification.delay_str)
